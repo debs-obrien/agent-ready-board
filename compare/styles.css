@@ -1,0 +1,118 @@
+:root {
+  --ink: #15202b;
+  --muted: #5b6b7c;
+  --line: #cfd8e3;
+  --bg: #f4f6f8;
+  --panel: #ffffff;
+  --accent: #0f6e56;
+  --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(15, 110, 86, 0.08), transparent 40%),
+    linear-gradient(180deg, #eef2f5 0%, var(--bg) 100%);
+  font-family: var(--font);
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  font-size: 0.92em;
+}
+
+.page {
+  width: min(1400px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.5rem 0 2.5rem;
+}
+
+.intro h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+  line-height: 1.15;
+}
+
+.intro p {
+  margin: 0 0 0.85rem;
+  max-width: 62rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.intro .try {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.keys {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.listen,
+.tested {
+  color: var(--muted);
+}
+
+.tested {
+  font-size: 0.95rem;
+}
+
+.boards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.board-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.board-panel h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.source {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.board-frame {
+  width: 100%;
+  height: min(78vh, 820px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+
+@media (max-width: 900px) {
+  .boards {
+    grid-template-columns: 1fr;
+  }
+
+  .board-frame {
+    height: 70vh;
+  }
+}
