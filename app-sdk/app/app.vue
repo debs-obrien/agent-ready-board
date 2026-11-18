@@ -48,76 +48,79 @@ type Card = {
 type Person = {
   value: string
   label: string
+  initials: string
 }
 
 const people: Person[] = [
-  { value: "ada", label: "Ada Lovelace" },
-  { value: "alan", label: "Alan Turing" },
-  { value: "grace", label: "Grace Hopper" },
-  { value: "linus", label: "Linus Torvalds" },
-  { value: "margaret", label: "Margaret Hamilton" },
-  { value: "barbara", label: "Barbara Liskov" },
-  { value: "donald", label: "Donald Knuth" },
-  { value: "tim", label: "Tim Berners-Lee" },
-  { value: "evelyn", label: "Evelyn Boyd Granville" },
-  { value: "ken", label: "Ken Thompson" },
+  { value: "ada", label: "Ada Lovelace", initials: "AL" },
+  { value: "grace", label: "Grace Hopper", initials: "GH" },
+  { value: "alan", label: "Alan Turing", initials: "AT" },
+  { value: "linus", label: "Linus Torvalds", initials: "LT" },
+  { value: "margaret", label: "Margaret Hamilton", initials: "MH" },
+  { value: "barbara", label: "Barbara Liskov", initials: "BL" },
+  { value: "guido", label: "Guido van Rossum", initials: "GR" },
+  { value: "brendan", label: "Brendan Eich", initials: "BE" },
+  { value: "katherine", label: "Katherine Johnson", initials: "KJ" },
+  { value: "donald", label: "Donald Knuth", initials: "DK" },
 ]
 
 const cards = reactive<Record<string, Card>>({
   "playwright-tests": {
     id: "playwright-tests",
     title: "Playwright tests",
-    description: "Cover the board's keyboard moves and dialogs.",
+    description:
+      "Cover the critical happy paths and one failure case for the board.",
     assignee: "ada",
   },
   "fix-ci": {
     id: "fix-ci",
     title: "Fix flaky CI pipeline",
-    description: "Pin the Node image and retry the seed step.",
-    assignee: "grace",
+    description: "Pin the Node version and retry flaky e2e jobs only once.",
+    assignee: "linus",
   },
   "auth-middleware": {
     id: "auth-middleware",
-    title: "Ship auth middleware",
-    description: "Gate preview routes behind the session cookie.",
-    assignee: "linus",
-  },
-  "api-rate-limits": {
-    id: "api-rate-limits",
-    title: "Document API rate limits",
-    description: "Add burst and sustained limits to the public docs.",
+    title: "Refactor auth middleware",
+    description: "Split session checks from route guards and add typed helpers.",
     assignee: null,
   },
-  "zod-schemas": {
-    id: "zod-schemas",
-    title: "Refactor Zod schemas",
-    description: "Share card and person schemas across forms.",
-    assignee: "barbara",
+  "redis-caching": {
+    id: "redis-caching",
+    title: "Add Redis caching layer",
+    description: "Cache read-heavy API responses with a short TTL.",
+    assignee: "guido",
   },
-  "nuxt-modules": {
-    id: "nuxt-modules",
-    title: "Upgrade Nuxt modules",
-    description: "Bump the UI SDK module and re-check generate.",
+  "api-webhooks": {
+    id: "api-webhooks",
+    title: "Document API webhooks",
+    description: "Write payload examples and retry semantics for partners.",
     assignee: "margaret",
   },
-  "openapi-types": {
-    id: "openapi-types",
-    title: "Add OpenAPI types",
-    description: "Generate clients from the board service contract.",
-    assignee: "tim",
+  "nuxt-upgrade": {
+    id: "nuxt-upgrade",
+    title: "Upgrade to Nuxt 4",
+    description: "Bump dependencies and fix breaking app directory changes.",
+    assignee: "brendan",
   },
-  "vite-chunking": {
-    id: "vite-chunking",
-    title: "Tune Vite chunking",
-    description: "Split the board shell from the dialog routes.",
-    assignee: "ken",
+  "memory-leak": {
+    id: "memory-leak",
+    title: "Investigate memory leak",
+    description: "Profile the worker process after long-running generate jobs.",
+    assignee: "alan",
+  },
+  "dark-mode": {
+    id: "dark-mode",
+    title: "Ship dark mode toggle",
+    description:
+      "Persist preference and respect prefers-color-scheme on first visit.",
+    assignee: "grace",
   },
 })
 
 const lists = ref<TransferLists>({
-  todo: ["playwright-tests", "fix-ci", "api-rate-limits"],
-  doing: ["auth-middleware", "zod-schemas", "nuxt-modules"],
-  done: ["openapi-types", "vite-chunking"],
+  todo: ["playwright-tests", "fix-ci", "auth-middleware"],
+  doing: ["redis-caching", "api-webhooks", "nuxt-upgrade"],
+  done: ["memory-leak", "dark-mode"],
 })
 
 const labels = computed(() =>
@@ -131,8 +134,13 @@ const editTitle = ref("")
 const editDescription = ref("")
 const editOpen = ref(false)
 
+const personOf = (value: string | null) =>
+  people.find((person) => person.value === value) ?? null
+
 const personLabel = (value: string | null) =>
-  people.find((person) => person.value === value)?.label ?? "Unassigned"
+  personOf(value)?.label ?? "Unassigned"
+
+const personInitials = (value: string | null) => personOf(value)?.initials ?? "?"
 
 function cardOf(cardId: string): Card {
   const card = cards[cardId]
@@ -140,6 +148,10 @@ function cardOf(cardId: string): Card {
     throw new Error(`Unknown card: ${cardId}`)
   }
   return card
+}
+
+function columnCount(column: string) {
+  return (lists.value[column] ?? []).length
 }
 
 function onListsChange(next: TransferLists) {
@@ -226,7 +238,13 @@ function onCardAction(cardId: string, value: string) {
         :key="column"
         class="column"
       >
-        <h2 class="column-heading">{{ COLUMN_LABELS[column] }}</h2>
+        <header class="column-header">
+          <h2 class="column-heading">{{ COLUMN_LABELS[column] }}</h2>
+          <span
+            class="count"
+            :aria-label="`${columnCount(column)} cards`"
+          >{{ columnCount(column) }}</span>
+        </header>
         <KanbanColumn :value="column" class="column-list">
           <KanbanCard
             v-for="cardId in state.lists[column] ?? []"
@@ -239,7 +257,7 @@ function onCardAction(cardId: string, value: string) {
               <h3 class="card-title">{{ cardOf(cardId).title }}</h3>
               <Menu @action="(value) => onCardAction(cardId, value)">
                 <MenuTrigger :aria-label="`Actions for ${cardOf(cardId).title}`">
-                  Actions
+                  ⋯
                 </MenuTrigger>
                 <MenuContent>
                   <MenuItem value="edit">Edit</MenuItem>
@@ -271,28 +289,37 @@ function onCardAction(cardId: string, value: string) {
             </p>
 
             <div class="card-assign">
-              <Combobox
-                :model-value="cardOf(cardId).assignee"
-                @value-change="(value) => assignCard(cardId, value)"
-              >
-                <ComboboxInput
-                  :aria-label="`Assign to for ${cardOf(cardId).title}`"
-                  :placeholder="personLabel(cardOf(cardId).assignee)"
-                />
-                <ComboboxContent>
-                  <ComboboxEmpty>No people found.</ComboboxEmpty>
-                  <ComboboxList>
-                    <ComboboxItem
-                      v-for="person in people"
-                      :key="person.value"
-                      :value="person.value"
-                      :label="person.label"
-                    >
-                      {{ person.label }}
-                    </ComboboxItem>
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
+              <span
+                class="assign-avatar"
+                :class="{ empty: !cardOf(cardId).assignee }"
+                aria-hidden="true"
+              >{{ personInitials(cardOf(cardId).assignee) }}</span>
+              <div class="assign-fields">
+                <span class="assign-eyebrow" aria-hidden="true">Assign to</span>
+                <Combobox
+                  :model-value="cardOf(cardId).assignee"
+                  @value-change="(value) => assignCard(cardId, value)"
+                >
+                  <ComboboxInput
+                    :aria-label="`Assign to for ${cardOf(cardId).title}`"
+                    :placeholder="personLabel(cardOf(cardId).assignee)"
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>No people found.</ComboboxEmpty>
+                    <ComboboxList>
+                      <ComboboxItem
+                        v-for="person in people"
+                        :key="person.value"
+                        :value="person.value"
+                        :label="person.label"
+                      >
+                        {{ person.label }}
+                      </ComboboxItem>
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </div>
+              <span class="assign-chevron" aria-hidden="true">▾</span>
             </div>
           </KanbanCard>
         </KanbanColumn>
