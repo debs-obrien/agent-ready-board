@@ -82,18 +82,67 @@ const board = definePrimitive({
       key: "focused",
     })
 
+    const cardItems = () => {
+      const { labels, lists } = context.store.get()
+      return Object.values(lists)
+        .flat()
+        .map((key) => ({ value: key, label: labels[key] ?? key }))
+    }
+
+    const resolveCard = (keyOrLabel: string) => {
+      const items = cardItems()
+      return (
+        items.find((item) => item.value === keyOrLabel)?.value ??
+        items.find((item) => item.label === keyOrLabel)?.value
+      )
+    }
+
+    const resolveList = (listOrLabel: string) => {
+      if (COLUMN_ORDER.includes(listOrLabel as (typeof COLUMN_ORDER)[number])) {
+        return listOrLabel
+      }
+      return COLUMN_ORDER.find((column) => COLUMN_LABELS[column] === listOrLabel)
+    }
+
     return {
       transfer,
       roving,
-      move: (key: string, list: string, index: number) =>
-        transfer.move(key, list, index),
-      grab: (key: string) => transfer.grab(key),
+      cardItems,
+      move: (keyOrLabel: string, listOrLabel: string, index = 0) => {
+        const key = resolveCard(keyOrLabel)
+        const list = resolveList(listOrLabel)
+        if (!key) {
+          throw new Error(
+            `No card "${keyOrLabel}". Its cards: ${
+              cardItems()
+                .map((item) => item.label)
+                .join(", ") || "none"
+            }.`,
+          )
+        }
+        if (!list) {
+          throw new Error(
+            `No column "${listOrLabel}". Its columns: ${COLUMN_ORDER.map(
+              (column) => COLUMN_LABELS[column],
+            ).join(", ")}.`,
+          )
+        }
+        if (!transfer.move(key, list, index)) {
+          throw new Error(`Could not move "${keyOrLabel}" to "${listOrLabel}".`)
+        }
+        return true
+      },
+      grab: (keyOrLabel: string) => {
+        const key = resolveCard(keyOrLabel) ?? keyOrLabel
+        return transfer.grab(key)
+      },
       drop: (event?: Event) => transfer.drop(event),
       cancel: () => transfer.cancel(),
     }
   },
   agent: {
     actions: ["move", "grab", "drop", "cancel"],
+    items: (api) => api.cardItems(),
   },
   slots: (slot) => ({
     root: slot<{}, { lists: TransferLists }>({
