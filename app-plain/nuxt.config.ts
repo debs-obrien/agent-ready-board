@@ -6,12 +6,4 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'static',
   },
-  app: {
-    head: {
-      htmlAttrs: {
-        lang: 'en',
-      },
-      title: 'Kanban',
-    },
-  },
 })
