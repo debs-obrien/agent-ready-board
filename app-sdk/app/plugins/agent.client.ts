@@ -8,6 +8,10 @@ export default defineNuxtPlugin(() => {
 
   registerTools(agent, { allow: () => true })
 
+  if (import.meta.dev) {
+    ;(window as Window & { __agent?: typeof agent }).__agent = agent
+  }
+
   return {
     provide: {
       agent,
