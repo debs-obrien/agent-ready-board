@@ -164,7 +164,6 @@ function onKeyboardMove(cardId: string, event: KeyboardEvent) {
   <div class="board-shell">
     <header class="hero">
       <div>
-        <p class="eyebrow">In-memory board</p>
         <h1>Kanban</h1>
         <p class="lede">
           Drag cards with the pointer, or focus a card and press Space, then use arrow keys to move it.
@@ -216,15 +215,6 @@ function onKeyboardMove(cardId: string, event: KeyboardEvent) {
 
 .hero {
   margin-bottom: 1.5rem;
-}
-
-.eyebrow {
-  margin: 0 0 0.35rem;
-  color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 h1 {
