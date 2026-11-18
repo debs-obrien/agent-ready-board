@@ -4,4 +4,12 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@ui-sdk/vue"],
   css: ["~/assets/css/main.css"],
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: "en",
+      },
+      title: "Sprint board",
+    },
+  },
 })

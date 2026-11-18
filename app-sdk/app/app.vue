@@ -203,7 +203,7 @@ function onCardAction(cardId: string, value: string) {
 </script>
 
 <template>
-  <div class="board-page">
+  <main class="board-page">
     <h1>Sprint board</h1>
     <p class="lede">
       Drag cards between columns, or focus a move handle and use the keyboard.
@@ -322,5 +322,5 @@ function onCardAction(cardId: string, value: string) {
         </form>
       </DialogContent>
     </Dialog>
-  </div>
+  </main>
 </template>
