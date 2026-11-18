@@ -96,7 +96,10 @@ const board = definePrimitive({
     actions: ["move", "grab", "drop", "cancel"],
   },
   slots: (slot) => ({
-    root: slot({
+    root: slot<{}, { lists: TransferLists }>({
+      state: (state, { api }) => ({
+        lists: api.transfer.lists(state),
+      }),
       attrs: () => ({
         role: "region",
         "aria-label": "Kanban board",

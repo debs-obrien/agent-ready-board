@@ -142,10 +142,6 @@ function cardOf(cardId: string): Card {
   return card
 }
 
-function columnCards(column: string): string[] {
-  return lists.value[column] ?? []
-}
-
 function onListsChange(next: TransferLists) {
   lists.value = next
 }
@@ -223,6 +219,7 @@ function onCardAction(cardId: string, value: string) {
       :lists="lists"
       :labels="labels"
       @lists-change="onListsChange"
+      v-slot="{ state }"
     >
       <section
         v-for="column in COLUMN_ORDER"
@@ -232,7 +229,7 @@ function onCardAction(cardId: string, value: string) {
         <h2 class="column-heading">{{ COLUMN_LABELS[column] }}</h2>
         <KanbanColumn :value="column" class="column-list">
           <KanbanCard
-            v-for="cardId in columnCards(column)"
+            v-for="cardId in state.lists[column] ?? []"
             :key="cardId"
             :value="cardId"
             class="card"
