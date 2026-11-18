@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent-ready board comparison</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="intro">
+        <h1>Agent-ready board comparison</h1>
+        <p>
+          Two live Kanban demos from the same prompt: one built with the
+          <a href="https://ui-sdk.dev/docs/core">UI SDK</a>
+          (<a href="https://github.com/vercel-labs/ui">vercel-labs/ui</a>),
+          and one built without it. Same features on both: three columns, cards,
+          keyboard moves, Assign-to picker, actions menu, and edit dialog.
+        </p>
+        <p class="try">Try the same moves on both.</p>
+        <ol class="keys">
+          <li>Tab to a card&rsquo;s move handle</li>
+          <li>Space to pick up</li>
+          <li>Arrow keys to move</li>
+          <li>Space to drop</li>
+          <li>Escape to cancel</li>
+        </ol>
+        <p class="listen">
+          Turn on a
+          <a href="https://en.wikipedia.org/wiki/Screen_reader">screen reader</a>
+          (software that speaks or brailles what is on screen, such as
+          <a href="https://support.apple.com/guide/voiceover/welcome/mac">VoiceOver</a>
+          on Apple devices or
+          <a href="https://www.nvaccess.org/about-nvda/">NVDA</a>
+          on Windows) and listen while you move a card. The SDK board announces
+          each step; the plain board does not.
+        </p>
+        <p class="tested">Tested in Chrome on Linux.</p>
+      </header>
+
+      <section class="boards" aria-label="Side-by-side demos">
+        <article class="board-panel">
+          <h2>Built with UI SDK</h2>
+          <p class="source">
+            From <code>app-sdk/</code> on the <code>sdk-attempt</code> branch.
+            <a href="https://agent-ready-board.vercel.app" target="_blank" rel="noopener noreferrer">Open full size</a>
+          </p>
+          <iframe
+            class="board-frame"
+            title="Kanban board built with UI SDK"
+            src="https://agent-ready-board.vercel.app"
+            loading="lazy"
+          ></iframe>
+        </article>
+
+        <article class="board-panel">
+          <h2>Built without the SDK (plain)</h2>
+          <p class="source">
+            From <code>app-plain/</code> on the <code>plain-attempt-2</code> branch.
+            <a href="https://agent-ready-board-plain.vercel.app" target="_blank" rel="noopener noreferrer">Open full size</a>
+          </p>
+          <iframe
+            class="board-frame"
+            title="Kanban board built without the SDK"
+            src="https://agent-ready-board-plain.vercel.app"
+            loading="lazy"
+          ></iframe>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
