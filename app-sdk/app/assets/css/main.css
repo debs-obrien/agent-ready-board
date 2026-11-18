@@ -1,0 +1,186 @@
+@layer ui-sdk;
+
+@import "@ui-sdk/core/web.css";
+
+:root {
+  color-scheme: light;
+  --ui-font-sans: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --page-bg: #f3efe6;
+  --page-ink: #1c1917;
+  --column-bg: #fffdf8;
+  --card-bg: #ffffff;
+  --line: color-mix(in oklab, var(--page-ink) 14%, transparent);
+  --accent: #0f6b5c;
+  --accent-ink: #ffffff;
+  --danger: #9f1239;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, #d9efe9 0%, transparent 55%),
+    linear-gradient(180deg, #f7f3ea 0%, var(--page-bg) 45%, #ebe4d7 100%);
+  color: var(--page-ink);
+  font-family: var(--ui-font-sans);
+}
+
+#__nuxt {
+  min-height: 100vh;
+}
+
+.board-page {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+}
+
+.board-page h1 {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.board-page .lede {
+  margin: 0 0 1.5rem;
+  max-width: 40rem;
+  color: color-mix(in oklab, var(--page-ink) 72%, white);
+}
+
+.board-instructions {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 18rem;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: color-mix(in oklab, var(--column-bg) 92%, white);
+}
+
+.column-heading {
+  margin: 0;
+  padding: 0.15rem 0.25rem 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.column-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-height: 12rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: var(--card-bg);
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--page-ink) 6%, transparent);
+}
+
+.card[data-moving] {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.card[data-dragging] {
+  opacity: 0.55;
+}
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.card-title {
+  flex: 1;
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.card-description {
+  margin: 0;
+  color: color-mix(in oklab, var(--page-ink) 68%, white);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.card-assign {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.card-assign [data-slot="combobox-content"] {
+  min-width: var(--anchor-width);
+}
+
+.move-handle {
+  flex: none;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.move-handle[data-grabbed],
+.move-handle[aria-pressed="true"] {
+  cursor: grabbing;
+  background: color-mix(in oklab, var(--accent) 16%, white);
+}
+
+.edit-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+[data-slot="menu-content"],
+[data-slot="combobox-content"],
+[data-slot="dialog-content"] {
+  z-index: 40;
+}
