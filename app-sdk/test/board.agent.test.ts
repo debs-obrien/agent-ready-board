@@ -3,7 +3,7 @@ import { createAgent } from "@ui-sdk/vue/agent"
 import { expect, test } from "vitest"
 import App from "../app/app.vue"
 
-test("an agent can find and change board controls", async () => {
+test("an agent can find named controls and move Playwright tests to Done", async () => {
   const agent = createAgent()
   render(App)
 
@@ -18,37 +18,28 @@ test("an agent can find and change board controls", async () => {
     ).toBeTruthy()
   }
 
-  const labels = components.map((entry) => entry.label)
-  expect(labels, "board region missing").toContain("Kanban board")
+  const board = components.find((entry) => entry.label === "Kanban board")
+  expect(board, "board missing from snapshot").toBeTruthy()
   expect(
-    labels.some((label) => label?.includes("Assign to for Playwright tests")),
-    "Playwright assign control missing",
+    board?.items?.some((item) => item.label === "Playwright tests"),
+    "Playwright tests missing from board items",
   ).toBe(true)
-  expect(
-    labels.some((label) => label?.includes("Actions for Playwright tests")),
-    "Playwright actions control missing",
-  ).toBe(true)
-
-  const assign = components.find((entry) =>
-    entry.label?.includes("Assign to for Playwright tests"),
-  )
-  expect(assign, "assign combobox missing").toBeTruthy()
 
   const result = await agent.act({
     steps: [
       {
-        ref: assign!.label!,
-        action: "setValue",
-        args: ["Grace Hopper"],
-      },
-      {
         ref: "Kanban board",
         action: "move",
-        args: ["playwright-tests", "done", 0],
+        args: ["Playwright tests", "Done", 0],
       },
     ],
   })
   expect(result.ok, result.error?.message).toBe(true)
+
+  const after = agent
+    .snapshot()
+    .find((entry) => entry.label === "Kanban board")
+  expect(after?.lists?.done?.[0]).toBe("playwright-tests")
   expect(
     screen.getByLabelText("Assign to for Playwright tests"),
   ).toBeTruthy()
